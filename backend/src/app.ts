@@ -21,7 +21,19 @@ app.use(morgan(env.NODE_ENV === 'development' ? 'dev' : 'combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// ─── Health Check ─────────────────────────────────────────────────────────────
+// ─── Root & Health Check ───────────────────────────────────────────────────────
+app.get('/', (_req, res) => {
+  res.json({
+    name: 'After Hours API',
+    status: 'online',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      api: '/api/v1',
+    },
+  });
+});
+
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString(), env: env.NODE_ENV });
 });
