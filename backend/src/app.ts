@@ -11,10 +11,33 @@ const app = express();
 
 // ─── Global Middleware ────────────────────────────────────────────────────────
 app.use(helmet());
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  ...(env.FRONTEND_URL ? [env.FRONTEND_URL] : []),
+];
+
 app.use(cors({
-  origin: env.NODE_ENV === 'production'
-    ? env.FRONTEND_URL ? [env.FRONTEND_URL] : []
-    : ['http://localhost:5173', 'http://localhost:3000'],
+  origin: (origin, callback) => {
+    // Allow server-to-server, curl, mobile apps, or same-origin
+    if (!origin) return callback(null, true);
+
+    try {
+      const { hostname } = new URL(origin);
+      if (
+        allowedOrigins.includes(origin) ||
+        hostname.endsWith('.vercel.app') ||
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1'
+      ) {
+        return callback(null, true);
+      }
+    } catch {
+      // invalid URL format
+    }
+
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true,
 }));
 app.use(morgan(env.NODE_ENV === 'development' ? 'dev' : 'combined'));
