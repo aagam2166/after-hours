@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Auth ────────────────────────────────────────────────────────────────────
+
+model User {
+  id          String    @id @default(uuid())
+  mobile      String    @unique
+  email       String?
+  name        String?
+  verified    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  bookings    Booking[]
+  otpCodes    OtpCode[]
+  ratings     Rating[]
+}
+
+model OtpCode {
+  id        String   @id @default(uuid())
+  mobile    String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [mobile], references: [mobile])
+
+  @@index([mobile])
+}
+
+// ─── Service Areas ────────────────────────────────────────────────────────────
+
+model ServiceArea {
+  id       String  @id @default(uuid())
+  pincode  String  @unique
+  city     String
+  state    String  @default("Maharashtra")
+  active   Boolean @default(true)
+
+  @@index([pincode])
+}
+
+// ─── Packages ─────────────────────────────────────────────────────────────────
+
+model Package {
+  id          String      @id @default(uuid())
+  name        PackageName @unique
+  displayName String
+  tagline     String
+  description String
+  basePrice   Int         // in INR paise
+  services    String[]    // list of included service keys
+  minGuests   Int?
+  maxGuests   Int?
+  sortOrder   Int         @default(0)
+
+  bookings    Booking[]
+}
+
+enum PackageName {
+  QUICK_RESET
+  CUSTOM_RESET
+  FULL_RESET
+}
+
+// ─── Bookings ─────────────────────────────────────────────────────────────────
+
+model Booking {
+  id                  String        @id @default(uuid())
+  userId              String
+  user                User          @relation(fields: [userId], references: [id])
+
+  // Phase 1 — Your Party
+  occasion            String?
+  guestCount          Int?
+  selectedServices    String[]
+  spaceSize           String?
+
+  // Phase 2 — Package
+  packageId           String?
+  package             Package?      @relation(fields: [packageId], references: [id])
+
+  // Phase 3 — When & Where
+  scheduledDate       DateTime?
+  scheduledTime       String?       // e.g. "23:30"
+  address             String?
+  flatNumber          String?
+  building            String?
+  landmark            String?
+  pincode             String?
+  latitude            Float?
+  longitude           Float?
+
+  // Special instructions
+  accessInstructions  String?
+  foodPackingNotes    String?
+  pets                String?       // "DOG" | "CAT" | "NONE"
+  doNotTouchItems     String[]
+  otherNotes          String?
+
+  // Phase 4 — Pricing
+  basePrice           Int?          // paise
+  serviceAdjustment   Int?
+  spaceAdjustment     Int?
+  lateNightAdjustment Int?
+  serviceFee          Int?
+  tax                 Int?
+  total               Int?
+
+  // Status
+  status              BookingStatus @default(DRAFT)
+  paymentStatus       PaymentStatus @default(PENDING)
+  slotHeldUntil       DateTime?
+
+  // Post-confirmation
+  crewId              String?
+  arrivalPin          String?
+
+  // Timestamps
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  photos              BookingPhoto[]
+  rating              Rating?
+}
+
+enum BookingStatus {
+  DRAFT
+  AWAITING_AVAILABILITY
+  SLOT_HELD
+  AWAITING_PAYMENT
+  PAYMENT_FAILED
+  CONFIRMED
+  CREW_ASSIGNED
+  CREW_ON_THE_WAY
+  CREW_ARRIVED
+  RESET_IN_PROGRESS
+  COMPLETED
+  ISSUE_REPORTED
+  CANCELLED
+  REFUND_PENDING
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+// ─── Booking Photos ────────────────────────────────────────────────────────────
+
+model BookingPhoto {
+  id        String   @id @default(uuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime @default(now())
+
+  @@index([bookingId])
+}
+
+// ─── Ratings ──────────────────────────────────────────────────────────────────
+
+model Rating {
+  id        String   @id @default(uuid())
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  score     Int      // 1–5
+  label     String   // "Not great" | "Okay" | "Good" | "Great" | "Amazing"
+  feedback  String?
+  createdAt DateTime @default(now())
+}
