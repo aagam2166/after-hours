@@ -19,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       style={{
-        padding: '12px 18px',
+        padding: '18px 20px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -27,6 +27,7 @@ export const Header: React.FC<HeaderProps> = ({
         position: 'sticky',
         top: 0,
         zIndex: 40,
+        minHeight: 72,
       }}
     >
       {/* Brand Logo */}
@@ -34,7 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
         onClick={() => onSelectTab('home')}
         style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
       >
-        <BrandLogo size={24} />
+        <BrandLogo size={50} />
       </div>
 
       {/* City Pill */}
@@ -47,17 +48,17 @@ export const Header: React.FC<HeaderProps> = ({
           backgroundColor: '#FFFFFF',
           border: '1px solid #E6DFD5',
           borderRadius: 9999,
-          padding: '7px 14px',
-          fontSize: '13px',
+          padding: '8px 16px',
+          fontSize: '14px',
           fontWeight: 700,
           color: '#0F172A',
           boxShadow: '0 1px 4px rgba(15, 23, 42, 0.04)',
           cursor: 'pointer',
         }}
       >
-        <MapPin size={14} color="#0F172A" />
+        <MapPin size={15} color="#0F172A" />
         <span>{currentCity}</span>
-        <ChevronDown size={14} color="#64748B" />
+        <ChevronDown size={15} color="#64748B" />
       </button>
 
       {/* Notification Bell */}
@@ -66,8 +67,8 @@ export const Header: React.FC<HeaderProps> = ({
         title="Notifications"
         style={{
           position: 'relative',
-          width: 38,
-          height: 38,
+          width: 42,
+          height: 42,
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
@@ -76,14 +77,14 @@ export const Header: React.FC<HeaderProps> = ({
           cursor: 'pointer',
         }}
       >
-        <Bell size={20} color="#0F172A" strokeWidth={2.2} />
+        <Bell size={22} color="#0F172A" strokeWidth={2.2} />
         <span
           style={{
             position: 'absolute',
-            top: 7,
-            right: 7,
-            width: 7,
-            height: 7,
+            top: 8,
+            right: 8,
+            width: 8,
+            height: 8,
             borderRadius: '50%',
             backgroundColor: '#FF5A36',
           }}

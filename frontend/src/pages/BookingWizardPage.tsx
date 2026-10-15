@@ -19,7 +19,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { BrandLogo } from '../components/common/BrandLogo';
+
 import { packagesApi, type PackageItem } from '../api/packages';
 import { bookingsApi, type BookingResponse } from '../api/bookings';
 import { useAuth } from '../context/AuthContext';
@@ -234,7 +234,7 @@ export const BookingWizardPage: React.FC<BookingWizardPageProps> = ({
         position: 'relative',
       }}
     >
-      {/* ─── Top Header: Back Arrow, BrandLogo, Progress Indicator ─── */}
+      {/* ─── Top Header: Back Arrow, Progress Indicator ─── */}
       <div
         style={{
           display: 'flex',
@@ -259,10 +259,6 @@ export const BookingWizardPage: React.FC<BookingWizardPageProps> = ({
         >
           <ArrowLeft size={18} color="#0F172A" />
         </button>
-
-        <div onClick={onCancel} style={{ cursor: 'pointer' }}>
-          <BrandLogo size={22} />
-        </div>
 
         {/* 5-dot Progress Bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>

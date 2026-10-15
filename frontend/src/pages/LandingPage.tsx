@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, ShieldCheck, Sparkles, Moon, Coffee, Heart } from 'lucide-react';
 import { BrandLogo } from '../components/common/BrandLogo';
 
 interface LandingPageProps {
@@ -8,53 +7,31 @@ interface LandingPageProps {
   isLoggedIn: boolean;
 }
 
-const slides = [
-  {
-    tag: 'MORNING-AFTER RESET',
-    headline: (
-      <>
-        Had a good night?<br />
-        <span style={{ color: '#FF5A36' }}>Great. Don't clean it.</span>
-        {' '}<span style={{ fontSize: '0.85em', color: '#FF5A36' }}>✌</span>
-      </>
-    ),
-    subtext: 'While you sleep in, our trained reset crew collects every red cup, bags the bottles, boxes leftover food, and restores your space.',
-    features: [
-      { icon: Moon, title: 'Arrival by 7:00 AM', desc: 'Dispatched post-wrap up' },
-      { icon: Sparkles, title: 'Zero Judgment', desc: 'Party aftermath specialists' },
-      { icon: Coffee, title: 'Wake Up Fresh', desc: 'Spotless counters & floors' },
-    ],
-  },
-  {
-    tag: 'POST-HOSTING CARE',
-    headline: (
-      <>
-        You hosted.<br />
-        <span style={{ color: '#FF5A36' }}>We'll handle the rest.</span>
-        {' '}<span style={{ fontSize: '0.85em', color: '#FF5A36' }}>♡</span>
-      </>
-    ),
-    subtext: 'Your party was legendary. The aftermath shouldn’t be your headache. Complete home restoration before your first coffee.',
-    features: [
-      { icon: Sparkles, title: 'Trash & Bottles Out', desc: 'Disposed & recycled' },
-      { icon: Heart, title: 'Food Boxed & Chilled', desc: 'Neatly organized in fridge' },
-      { icon: ShieldCheck, title: 'Vetted & Verified', desc: 'Discreet background-checked team' },
-    ],
-  },
-];
-
+/**
+ * After Hours — Splash Landing Page
+ *
+ * Matches the PDF Page 1 design exactly:
+ * - Cream (#FFF9F3) background
+ * - Decorative sparkles (✦) scattered above the logo
+ * - Large centered AFTER HOURS logo
+ * - "Host the memories." in navy
+ * - "Leave the aftermath to us." in coral
+ * - Organic peach blob in the bottom-left
+ * - Handwritten "Good Nights Cleaner Mornings" in coral (Caveat font)
+ * - Subtle decorative organic line
+ */
 export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin, isLoggedIn }) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const [logoVisible, setLogoVisible] = useState(false);
+  const [textVisible, setTextVisible] = useState(false);
 
-  // Auto switch slides every 6 seconds
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((s) => (s + 1) % slides.length);
-    }, 6000);
-    return () => clearInterval(timer);
+    // Staggered entrance animations
+    const t1 = setTimeout(() => setVisible(true), 100);
+    const t2 = setTimeout(() => setLogoVisible(true), 400);
+    const t3 = setTimeout(() => setTextVisible(true), 800);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
-
-  const slide = slides[currentSlide];
 
   return (
     <div
@@ -63,272 +40,322 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onLogin,
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
-        backgroundColor: 'var(--color-cream)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFF9F3',
         position: 'relative',
         overflow: 'hidden',
-        padding: '16px 20px 32px',
+        cursor: 'pointer',
       }}
+      onClick={onGetStarted}
     >
-      {/* Background ambient warm radial glow - NO background images */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '-10%',
-          right: '-10%',
-          width: '420px',
-          height: '420px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255, 90, 54, 0.1) 0%, rgba(250, 247, 242, 0) 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '5%',
-          left: '-15%',
-          width: '380px',
-          height: '380px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255, 234, 230, 0.6) 0%, rgba(250, 247, 242, 0) 70%)',
-          pointerEvents: 'none',
-        }}
-      />
+      {/* ═══ DECORATIVE ELEMENTS ═══ */}
 
-      {/* ─── Top Header (Clean Brand + Login Button Only, NO Navbar) ─── */}
-      <div
+      {/* Soft peach organic blob — bottom left */}
+      <svg
+        viewBox="0 0 400 300"
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          position: 'relative',
-          zIndex: 10,
-          paddingTop: '6px',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: 'clamp(280px, 45vw, 500px)',
+          height: 'auto',
+          opacity: visible ? 0.7 : 0,
+          transition: 'opacity 1.2s ease',
+          pointerEvents: 'none',
         }}
       >
-        <BrandLogo size={24} />
+        <path
+          d="M0 300 C 30 180, 80 120, 160 140 C 240 160, 200 80, 280 60 C 320 50, 360 100, 400 80 L 400 300 Z"
+          fill="#FFE8DE"
+        />
+        <path
+          d="M0 300 C 50 220, 100 180, 180 200 C 260 220, 220 140, 310 120 C 350 110, 380 160, 400 140 L 400 300 Z"
+          fill="#FFDDD0"
+          opacity="0.4"
+        />
+      </svg>
 
-        {!isLoggedIn ? (
-          <button
-            onClick={onLogin}
-            style={{
-              padding: '8px 18px',
-              borderRadius: 9999,
-              border: '1.5px solid #0F172A',
-              backgroundColor: 'transparent',
-              color: '#0F172A',
-              fontSize: '13px',
-              fontWeight: 800,
-              cursor: 'pointer',
-              letterSpacing: '0.2px',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            Log in
-          </button>
-        ) : (
-          <button
-            onClick={onGetStarted}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 9999,
-              backgroundColor: '#0F172A',
-              color: '#FFFFFF',
-              fontSize: '13px',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            Go to App →
-          </button>
-        )}
-      </div>
+      {/* Organic thin decorative line — bottom area */}
+      <svg
+        viewBox="0 0 500 200"
+        style={{
+          position: 'absolute',
+          bottom: '8%',
+          left: '5%',
+          width: 'clamp(200px, 35vw, 400px)',
+          height: 'auto',
+          opacity: visible ? 0.3 : 0,
+          transition: 'opacity 1.5s ease 0.5s',
+          pointerEvents: 'none',
+        }}
+      >
+        <path
+          d="M 0 150 C 80 100, 150 180, 250 120 C 350 60, 400 140, 500 100"
+          stroke="#FFB9A6"
+          strokeWidth="1.5"
+          fill="none"
+        />
+      </svg>
 
-      {/* ─── Center Hero Content ─── */}
+      {/* ═══ SPARKLES ═══ */}
+
+      {/* Top center sparkle — 4-point star */}
+      <svg
+        viewBox="0 0 24 24"
+        style={{
+          position: 'absolute',
+          top: '14%',
+          left: '55%',
+          width: 22,
+          height: 22,
+          opacity: visible ? 0.35 : 0,
+          transition: 'opacity 0.8s ease 0.3s',
+          pointerEvents: 'none',
+        }}
+      >
+        <path
+          d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"
+          fill="#E8C9A8"
+        />
+      </svg>
+
+      {/* Upper-right sparkle — smaller */}
+      <svg
+        viewBox="0 0 16 16"
+        style={{
+          position: 'absolute',
+          top: '11%',
+          left: '62%',
+          width: 12,
+          height: 12,
+          opacity: visible ? 0.25 : 0,
+          transition: 'opacity 0.8s ease 0.5s',
+          pointerEvents: 'none',
+        }}
+      >
+        <path
+          d="M8 0 L9.5 6.5 L16 8 L9.5 9.5 L8 16 L6.5 9.5 L0 8 L6.5 6.5 Z"
+          fill="#D4B896"
+        />
+      </svg>
+
+      {/* Another small sparkle upper-left area */}
+      <svg
+        viewBox="0 0 16 16"
+        style={{
+          position: 'absolute',
+          top: '18%',
+          left: '42%',
+          width: 10,
+          height: 10,
+          opacity: visible ? 0.2 : 0,
+          transition: 'opacity 0.8s ease 0.7s',
+          pointerEvents: 'none',
+        }}
+      >
+        <path
+          d="M8 0 L9.5 6.5 L16 8 L9.5 9.5 L8 16 L6.5 9.5 L0 8 L6.5 6.5 Z"
+          fill="#D4B896"
+        />
+      </svg>
+
+      {/* ═══ CENTERED CONTENT ═══ */}
+
       <div
         style={{
           position: 'relative',
           zIndex: 10,
-          marginTop: '32px',
-          marginBottom: '24px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '20px',
+          alignItems: 'center',
+          textAlign: 'center',
+          maxWidth: 480,
+          padding: '0 24px',
         }}
       >
-        {/* Category Pill Tag */}
-        <div>
-          <span
-            style={{
-              display: 'inline-block',
-              fontSize: '10.5px',
-              fontWeight: 800,
-              letterSpacing: '1.2px',
-              textTransform: 'uppercase',
-              color: '#FF5A36',
-              backgroundColor: '#FFE8E2',
-              padding: '6px 14px',
-              borderRadius: 9999,
-            }}
-          >
-            ✦ {slide.tag}
-          </span>
-        </div>
-
-        {/* Large Bold Headline */}
-        <h1
+        {/* Logo */}
+        <div
           style={{
-            fontFamily: 'Manrope, sans-serif',
-            fontSize: '34px',
-            fontWeight: 800,
-            color: '#0F172A',
-            lineHeight: '1.18',
-            letterSpacing: '-0.8px',
-            margin: 0,
-            minHeight: '84px',
+            opacity: logoVisible ? 1 : 0,
+            transform: logoVisible ? 'scale(1)' : 'scale(0.85)',
+            transition: 'opacity 0.7s ease, transform 0.7s ease',
+            marginBottom: 32,
           }}
         >
-          {slide.headline}
-        </h1>
+          <BrandLogo size={220} />
+        </div>
 
-        {/* Descriptive Subtext */}
+        {/* Tagline */}
+        <div
+          style={{
+            opacity: textVisible ? 1 : 0,
+            transform: textVisible ? 'translateY(0)' : 'translateY(12px)',
+            transition: 'opacity 0.6s ease, transform 0.6s ease',
+          }}
+        >
+          <p
+            style={{
+              fontFamily: 'Manrope, sans-serif',
+              fontSize: 'clamp(16px, 2.2vw, 20px)',
+              fontWeight: 500,
+              color: '#111A35',
+              lineHeight: 1.5,
+              margin: 0,
+              letterSpacing: '0.2px',
+            }}
+          >
+            Host the memories.
+          </p>
+          <p
+            style={{
+              fontFamily: 'Manrope, sans-serif',
+              fontSize: 'clamp(16px, 2.2vw, 20px)',
+              fontWeight: 700,
+              color: '#FF6B4A',
+              lineHeight: 1.5,
+              margin: 0,
+              letterSpacing: '0.2px',
+            }}
+          >
+            Leave the aftermath to us.
+          </p>
+        </div>
+      </div>
+
+      {/* ═══ HANDWRITTEN NOTE — bottom right ═══ */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 'clamp(40px, 8vh, 80px)',
+          right: 'clamp(24px, 6vw, 60px)',
+          zIndex: 10,
+          opacity: textVisible ? 0.75 : 0,
+          transform: textVisible ? 'rotate(-4deg)' : 'rotate(-4deg) translateY(10px)',
+          transition: 'opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s',
+          pointerEvents: 'none',
+        }}
+      >
         <p
           style={{
-            fontSize: '14.5px',
-            lineHeight: '1.55',
-            color: '#555048',
+            fontFamily: 'Caveat, cursive',
+            fontSize: 'clamp(16px, 2.5vw, 22px)',
+            fontWeight: 600,
+            color: '#FF6B4A',
+            lineHeight: 1.35,
             margin: 0,
-            minHeight: '66px',
+            textAlign: 'right',
           }}
         >
-          {slide.subtext}
+          Good Nights<br />
+          Cleaner<br />
+          Mornings
         </p>
-
-        {/* 3 Feature Value Props */}
-        <div
+        {/* Small heart accent */}
+        <span
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            marginTop: '8px',
+            display: 'block',
+            textAlign: 'right',
+            fontSize: 'clamp(12px, 1.5vw, 16px)',
+            color: '#FF6B4A',
+            marginTop: 2,
           }}
         >
-          {slide.features.map((feat, idx) => {
-            const Icon = feat.icon;
-            return (
-              <div
-                key={idx}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  backgroundColor: '#FFFFFF',
-                  padding: '12px 14px',
-                  borderRadius: '16px',
-                  border: '1px solid #ECE7DE',
-                  boxShadow: '0 2px 8px rgba(15, 23, 42, 0.02)',
-                }}
-              >
-                <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: '12px',
-                    backgroundColor: '#FFF1ED',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Icon size={18} color="#FF5A36" strokeWidth={2.2} />
-                </div>
-                <div>
-                  <h4 style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', margin: 0 }}>
-                    {feat.title}
-                  </h4>
-                  <p style={{ fontSize: '11px', color: '#7E7972', margin: 0, marginTop: 2 }}>
-                    {feat.desc}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Slide Indicator Dots */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentSlide(i)}
-              style={{
-                width: currentSlide === i ? 26 : 8,
-                height: 8,
-                borderRadius: 9999,
-                backgroundColor: currentSlide === i ? '#FF5A36' : '#D9D3C7',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                padding: 0,
-              }}
-            />
-          ))}
-        </div>
+          ♡
+        </span>
       </div>
 
-      {/* ─── Bottom CTA Section ─── */}
+      {/* ═══ LOGIN/ENTER HINT — very subtle at bottom ═══ */}
       <div
         style={{
-          position: 'relative',
+          position: 'absolute',
+          bottom: 20,
+          left: 0,
+          right: 0,
           zIndex: 10,
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '12px',
-          marginTop: 'auto',
+          justifyContent: 'center',
+          gap: 16,
+          opacity: textVisible ? 0.6 : 0,
+          transition: 'opacity 0.8s ease 0.6s',
         }}
       >
-        <button
-          onClick={onGetStarted}
+        <span
           style={{
-            width: '100%',
-            padding: '16px 24px',
-            background: 'linear-gradient(135deg, #FF7253 0%, #FF5A36 100%)',
-            color: '#FFFFFF',
-            borderRadius: 9999,
-            fontWeight: 800,
-            fontSize: '15.5px',
-            letterSpacing: '0.8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '10px',
-            boxShadow: '0 10px 28px rgba(255, 90, 54, 0.38)',
-            cursor: 'pointer',
-            border: 'none',
-          }}
-        >
-          <span style={{ fontSize: '16px' }}>✦</span>
-          <span>RESET MY SPACE</span>
-          <span style={{ fontSize: '18px', fontWeight: 900 }}>→</span>
-        </button>
-
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            color: '#716C64',
-            fontSize: '12px',
+            fontFamily: 'Manrope, sans-serif',
+            fontSize: 12,
             fontWeight: 600,
+            color: '#A89E94',
+            letterSpacing: '0.4px',
           }}
         >
-          <Clock size={13} color="#716C64" />
-          <span>Book in under 1 min · No cleanup supplies needed</span>
-        </div>
+          Tap anywhere to continue
+        </span>
       </div>
+
+      {/* Top-right login link for returning users */}
+      {!isLoggedIn && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onLogin();
+          }}
+          style={{
+            position: 'absolute',
+            top: 20,
+            right: 24,
+            zIndex: 20,
+            background: 'none',
+            border: '1.5px solid #D4CCC2',
+            borderRadius: 9999,
+            padding: '7px 18px',
+            fontSize: 12,
+            fontWeight: 700,
+            color: '#111A35',
+            cursor: 'pointer',
+            opacity: textVisible ? 1 : 0,
+            transition: 'opacity 0.5s ease 0.8s',
+            letterSpacing: '0.3px',
+          }}
+        >
+          Log in
+        </button>
+      )}
+
+      {isLoggedIn && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onGetStarted();
+          }}
+          style={{
+            position: 'absolute',
+            top: 20,
+            right: 24,
+            zIndex: 20,
+            background: '#111A35',
+            border: 'none',
+            borderRadius: 9999,
+            padding: '8px 18px',
+            fontSize: 12,
+            fontWeight: 700,
+            color: '#FFFFFF',
+            cursor: 'pointer',
+            opacity: textVisible ? 1 : 0,
+            transition: 'opacity 0.5s ease 0.8s',
+          }}
+        >
+          Go to App →
+        </button>
+      )}
+
+      {/* ═══ SPARKLE ANIMATION KEYFRAMES ═══ */}
+      <style>{`
+        @keyframes ah-sparkle-pulse {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.15); }
+        }
+      `}</style>
     </div>
   );
 };

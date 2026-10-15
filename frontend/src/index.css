@@ -57,7 +57,7 @@ body {
 /* App Container - Naturally Responsive Desktop & Mobile */
 #root {
   width: 100%;
-  max-width: 460px;
+  max-width: 560px;
   min-height: 100vh;
   margin: 0 auto;
   background-color: var(--color-cream);
@@ -70,13 +70,16 @@ body {
 @media (min-width: 768px) {
   body {
     background-color: #E8E2D8;
-    padding: 20px 0;
+    padding: 24px 0;
+    align-items: center;
   }
   #root {
     border-radius: 28px;
     border: 1px solid var(--color-border);
     overflow: hidden;
-    min-height: calc(100vh - 40px);
+    min-height: min(92vh, 900px);
+    max-height: 94vh;
+    overflow-y: auto;
   }
 }
 
